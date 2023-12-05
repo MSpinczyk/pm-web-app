@@ -164,11 +164,21 @@ def update_dropdowns(contents, filename):
 def update(contents, case_id_col, activity_col, timestamp_col, filter_range, algorithm, update_checkbox,filename):
     if contents is not None and update_checkbox == 'update_bpmn':
         content_type, content_string = contents.split(',')
-        decoded = base64.b64decode(content_string).decode('utf-8')
+        # print(len(contents))
+        # print(contents)
+        # decoded = base64.b64decode(content_string).decode('utf-8')
         # file_extension = contents.split('.')[-1]
         if 'xes' in filename:
-            log = read_xes(io.StringIO(decoded))
+            decoded = base64.b64decode(content_string)
+            upload_folder = 'uploads'
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+            with open(os.path.join(upload_folder, 'temp.xes'), 'wb') as f:
+                f.write(decoded)
+            log = read_xes('uploads/temp.xes')
+      
         elif 'csv' in filename:
+            decoded = base64.b64decode(content_string).decode('utf-8')
             log = read_csv(io.StringIO(decoded), case_id_col, activity_col, timestamp_col)
 
         # Apply filters
@@ -190,11 +200,18 @@ def update(contents, case_id_col, activity_col, timestamp_col, filter_range, alg
         return  [html.Img(src=f'data:image/png;base64,{encoded_image}', style={'width': '100%'})]
     elif contents is not None and update_checkbox == 'petri':
         content_type, content_string = contents.split(',')
-        decoded = base64.b64decode(content_string).decode('utf-8')
         # file_extension = contents.split('.')[-1]
         if 'xes' in filename:
-            log = read_xes(io.StringIO(decoded))
+            decoded = base64.b64decode(content_string)
+            upload_folder = 'uploads'
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+            with open(os.path.join(upload_folder, 'temp.xes'), 'wb') as f:
+                f.write(decoded)
+            log = read_xes('uploads/temp.xes')
+            
         elif 'csv' in filename:
+            decoded = base64.b64decode(content_string).decode('utf-8')
             log = read_csv(io.StringIO(decoded), case_id_col, activity_col, timestamp_col)
 
         # Apply filters
